@@ -30,14 +30,6 @@ services:
     logging: *default-logging
     pull_policy: always
     tty: true
-    entrypoint:
-      - ovos-stt-server
-      - --engine
-      - ovos-stt-plugin-fasterwhisper
-      - --gradio
-      - --cache
-      - --lang
-      - en
     environment:
       TZ: $TZ
     ports:
