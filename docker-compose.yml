@@ -25,6 +25,9 @@ volumes:
   ovos_stt_vosk_gradio_cache:
     name: ovos_stt_vosk_gradio_cache
     driver: local
+  ovos_stt_chromium_gradio_cache:
+    name: ovos_stt_chromium_gradio_cache
+    driver: local
 
 services:
   ovos_stt_fasterwhisper:
@@ -62,3 +65,20 @@ services:
       - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro
       - ovos_stt_vosk_cache:/home/${OVOS_USER}/.local/share/vosk
       - ovos_stt_vosk_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
+
+  ovos_stt_chromium:
+    <<: *podman
+    container_name: ovos_stt_chromium
+    hostname: ovos_stt_chromium
+    restart: unless-stopped
+    image: docker.io/smartgic/ovos-stt-server-chromium:${VERSION}
+    logging: *default-logging
+    pull_policy: always
+    tty: true
+    environment:
+      TZ: $TZ
+    ports:
+      - "8082:8080"
+    volumes:
+      - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro
+      - ovos_stt_chromium_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
