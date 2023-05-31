@@ -13,11 +13,17 @@ x-logging: &default-logging
     max-buffer-size: 4m
 
 volumes:
-  ovos_stt_cache:
-    name: ovos_stt_cache
+  ovos_stt_fasterwshiper_cache:
+    name: ovos_stt_fasterwshiper_cache
     driver: local
-  ovos_stt_gradio_cache:
-    name: ovos_stt_gradio_cache
+  ovos_stt_fasterwshipe_gradio_cache:
+    name: ovos_stt_fasterwshipe_gradio_cache
+    driver: local
+  ovos_stt_vosk_cache:
+    name: ovos_stt_vosk_cache
+    driver: local
+  ovos_stt_vosk_gradio_cache:
+    name: ovos_stt_vosk_gradio_cache
     driver: local
 
 services:
@@ -36,8 +42,8 @@ services:
       - "8080:8080"
     volumes:
       - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro
-      - ovos_stt_cache:/home/${OVOS_USER}/.cache
-      - ovos_stt_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
+      - ovos_stt_fasterwshiper_cache:/home/${OVOS_USER}/.cache
+      - ovos_stt_fasterwshipe_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
 
   ovos_stt_vosk:
     <<: *podman
@@ -51,8 +57,8 @@ services:
     environment:
       TZ: $TZ
     ports:
-      - "8080:8080"
+      - "8081:8080"
     volumes:
       - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro
-      - ovos_stt_cache:/home/${OVOS_USER}/.cache
-      - ovos_stt_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
+      - ovos_stt_vosk_cache:/home/${OVOS_USER}/.local/share/vosk
+      - ovos_stt_vosk_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples

@@ -23,6 +23,7 @@ RUN pip3 install aiohttp \
   else \
   pip3 install ovos-stt-http-server SpeechRecognition ovos-stt-plugin-vosk; \
   fi \
+  && mkdir -p /home/${USER}/.local/share/vosk \
   && rm -rf ${HOME}/.cache
 
 ENV PATH /home/${USER}/.venv/bin:$PATH
