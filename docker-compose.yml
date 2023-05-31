@@ -1,0 +1,48 @@
+---
+version: "3.9"
+
+x-podman: &podman
+  userns_mode: keep-id
+  security_opt:
+    - "label=disable"
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    mode: non-blocking
+    max-buffer-size: 4m
+
+volumes:
+  ovos_stt_cache:
+    name: ovos_stt_cache
+    driver: local
+  ovos_stt_gradio_cache:
+    name: ovos_stt_gradio_cache
+    driver: local
+
+services:
+  ovos_stt_fasterwhisper:
+    <<: *podman
+    container_name: ovos_stt_fasterwhisper
+    hostname: ovos_stt_fasterwhisper
+    restart: unless-stopped
+    image: docker.io/smartgic/ovos-stt-server-fasterwhisper:${VERSION}
+    logging: *default-logging
+    pull_policy: always
+    tty: true
+    entrypoint:
+      - ovos-stt-server
+      - --engine
+      - ovos-stt-plugin-fasterwhisper
+      - --gradio
+      - --cache
+      - --lang
+      - en
+    environment:
+      TZ: $TZ
+    ports:
+      - "8080:8080"
+    volumes:
+      - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro
+      - ovos_stt_cache:/home/${OVOS_USER}/.cache
+      - ovos_stt_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
