@@ -9,7 +9,7 @@ LABEL org.opencontainers.image.description="High-performance inference of OpenAI
 LABEL org.opencontainers.image.version=${VERSION}
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 LABEL org.opencontainers.image.documentation="https://openvoiceos.github.io/community-docs"
-LABEL org.opencontainers.image.source="https://github.com/OpenVoiceOS/ovos-docker"
+LABEL org.opencontainers.image.source="https://github.com/OpenVoiceOS/ovos-docker-stt"
 LABEL org.opencontainers.image.vendor="Open Voice OS"
 
 ARG ALPHA=false
@@ -28,6 +28,5 @@ RUN pip3 install aiohttp \
 
 ENV PATH /home/${USER}/.venv/bin:$PATH
 ENV VIRTUAL_ENV /home/${USER}/.venv
-
 
 ENTRYPOINT ovos-stt-server --engine ovos-stt-plugin-fasterwhisper
