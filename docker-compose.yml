@@ -74,6 +74,7 @@ services:
   #               - gpu
   #   environment:
   #     TZ: $TZ
+  #     CT2_CUDA_ALLOW_FP16: 1
   #   ports:
   #     - "8080:8080"
   #   volumes:
