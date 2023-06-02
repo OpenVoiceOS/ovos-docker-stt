@@ -16,8 +16,8 @@ volumes:
   ovos_stt_fasterwshiper_cache:
     name: ovos_stt_fasterwshiper_cache
     driver: local
-  ovos_stt_fasterwshipe_gradio_cache:
-    name: ovos_stt_fasterwshipe_gradio_cache
+  ovos_stt_fasterwshiper_gradio_cache:
+    name: ovos_stt_fasterwshiper_gradio_cache
     driver: local
   ovos_stt_vosk_cache:
     name: ovos_stt_vosk_cache
@@ -49,7 +49,7 @@ services:
     volumes:
       - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro
       - ovos_stt_fasterwshiper_cache:/home/${OVOS_USER}/.cache
-      - ovos_stt_fasterwshipe_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
+      - ovos_stt_fasterwshiper_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
 
   ########################
   # Uncomment this service if you want to use Nvidia CUDA
@@ -80,7 +80,7 @@ services:
   #   volumes:
   #     - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro
   #     - ovos_stt_fasterwshiper_cache:/home/${OVOS_USER}/.cache
-  #     - ovos_stt_fasterwshipe_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
+  #     - ovos_stt_fasterwshiper_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
 
   ovos_stt_vosk:
     <<: *podman
