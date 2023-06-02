@@ -47,6 +47,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
+      - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro,z
       - ovos_stt_fasterwhisper_cache:/home/${OVOS_USER}/.cache
       - ovos_stt_fasterwshiper_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
 
@@ -77,6 +78,7 @@ services:
   #   ports:
   #     - "8080:8080"
   #   volumes:
+  #     - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro,z
   #     - ovos_stt_fasterwhisper_cache:/home/${OVOS_USER}/.cache
   #     - ovos_stt_fasterwshiper_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
 
@@ -94,6 +96,7 @@ services:
     ports:
       - "8081:8080"
     volumes:
+      - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro,z
       - ovos_stt_vosk_cache:/home/${OVOS_USER}/.local/share/vosk
       - ovos_stt_vosk_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
 
@@ -111,6 +114,7 @@ services:
     ports:
       - "8082:8080"
     volumes:
+      - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro,z
       - ovos_stt_chromium_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
 
   ovos_stt_deepgram:
@@ -127,4 +131,5 @@ services:
     ports:
       - "8083:8080"
     volumes:
+      - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro,z
       - ovos_stt_deepgram_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
