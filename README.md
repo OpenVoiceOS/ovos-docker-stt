@@ -24,12 +24,20 @@ docker compose up -d
     },
     "ovos-stt-plugin-deepgram": {
       "key": "CHANGE-ME"
+    },
+    "ovos-stt-plugin-chromium": {
+        "lang": "en-US",
+        "pfilter": false
     }
   }
 }
 ```
 
 CUDA usage
+
+nvidia-container-toolkit
+https://github.com/containers/podman/discussions/16101
+
 
 ```json
 {
@@ -47,6 +55,10 @@ CUDA usage
     },
     "ovos-stt-plugin-deepgram": {
       "key": "CHANGE-ME"
+    },
+    "ovos-stt-plugin-chromium": {
+        "lang": "en-US",
+        "pfilter": false
     }
   }
 }
