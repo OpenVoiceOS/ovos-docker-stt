@@ -51,6 +51,36 @@ services:
       - ovos_stt_fasterwshiper_cache:/home/${OVOS_USER}/.cache
       - ovos_stt_fasterwshipe_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
 
+  ########################
+  # Uncomment this service if you want to use Nvidia CUDA
+  # with Faster Whisper Speech-to-Text
+  ########################
+  # ovos_stt_fasterwhisper:
+  #   <<: *podman
+  #   container_name: ovos_stt_fasterwhisper
+  #   hostname: ovos_stt_fasterwhisper
+  #   restart: unless-stopped
+  #   image: docker.io/smartgic/ovos-stt-server-fasterwhisper-cuda:${VERSION}
+  #   logging: *default-logging
+  #   pull_policy: always
+  #   tty: true
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: 1
+  #             capabilities:
+  #               - gpu
+  #   environment:
+  #     TZ: $TZ
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro
+  #     - ovos_stt_fasterwshiper_cache:/home/${OVOS_USER}/.cache
+  #     - ovos_stt_fasterwshipe_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
+
   ovos_stt_vosk:
     <<: *podman
     container_name: ovos_stt_vosk
