@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
+FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
 
 ARG BUILD_DATE=unknown
 ARG VERSION=unknown
@@ -13,6 +13,7 @@ LABEL org.opencontainers.image.vendor="Open Voice OS"
 
 ARG ALPHA=false
 ARG USER=ovos
+ARG LIBNVRCT="find /usr/local/cuda/lib64/ -type f -name 'libnvrtc.so*'"
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -26,6 +27,10 @@ RUN apt-get update \
   && . /home/${USER}/.venv/bin/activate \
   && mkdir -p /home/${USER}/.config/mycroft /home/${USER}/.cache /home/${USER}/gradio_cached_examples \
   && chown ${USER}:${USER} -R /home/${USER} \
+  && if [ -f $(eval $LIBNVRCT) ]; then \
+  cd /usr/local/cuda/lib64; \
+  ln -s -f $(eval $LIBNVRCT | awk -F"/" '{ print $NF }') libnvrtc.so; \
+  fi \
   && apt-get --purge autoremove -y \
   && rm -rf ${HOME}/.cache/* /var/lib/apt /var/log/{apt,dpkg.log}
 
