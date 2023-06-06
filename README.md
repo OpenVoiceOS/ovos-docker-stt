@@ -12,14 +12,23 @@ Open Voice OS provides support to different STT engines via a plugin mechanism e
 
 To facilitate the installation and the adoption of local Speech-to-Text engine, we build a set of OCI images compatible with Docker, Podman and Kubernetes as well.
 
-| Image                                | Port       | Description                                                                                                                                                          |
-| ---                                  | ---        | ---                                                                                                                                                                  |
-| `ovos-stt-plugin-chromium`           | 8082->8080 | A STT plugin for OVOS using the Google Chrome browser API                                                                                                            |
-| `ovos-stt-plugin-deepgram`           | 8083->8080 | Unmatched accuracy. Blazing fast. Enterprise scale. Hands-down the best price. Everything developers need to build with confidence and ship faster                   |
-| `ovos-stt-plugin-fasterwhisper`      | 8080->8080 | High-performance inference of OpenAI's Whisper automatic speech recognition (ASR) model                                                                              |
-| `ovos-stt-plugin-fasterwhisper-cuda` | 8080->8080 | High-performance inference of OpenAI's Whisper automatic speech recognition (ASR) model supporting Nvidia CUDA                                                       |
-| `ovos-stt-plugin-nemo`               | 8084->8080 | Conversational AI toolkit built for researchers working on automatic speech recognition (ASR), natural language processing (NLP), and text-to-speech synthesis (TTS) |
-| `ovos-stt-plugin-vosk`               | 8081->8080 | Vosk is a speech recognition toolkit supporting more than 20 languages and dialects, works offline and able to run on lightweight devices                            |
+| Image                                | Port | Description                                                                                                                                                          |
+| ---                                  | ---  | ---                                                                                                                                                                  |
+| `ovos-stt-plugin-chromium`           | 8082 | A STT plugin for OVOS using the Google Chrome browser API                                                                                                            |
+| `ovos-stt-plugin-deepgram`           | 8083 | Unmatched accuracy. Blazing fast. Enterprise scale. Hands-down the best price. Everything developers need to build with confidence and ship faster                   |
+| `ovos-stt-plugin-fasterwhisper`      | 8080 | High-performance inference of OpenAI's Whisper automatic speech recognition (ASR) model                                                                              |
+| `ovos-stt-plugin-fasterwhisper-cuda` | 8080 | High-performance inference of OpenAI's Whisper automatic speech recognition (ASR) model supporting Nvidia CUDA                                                       |
+| `ovos-stt-plugin-nemo`               | 8084 | Conversational AI toolkit built for researchers working on automatic speech recognition (ASR), natural language processing (NLP), and text-to-speech synthesis (TTS) |
+| `ovos-stt-plugin-vosk`               | 8081 | Vosk is a speech recognition toolkit supporting more than 20 languages and dialects, works offline and able to run on lightweight devices                            |
+
+### Image alternatives
+
+There are two *(2)* different implementations for Faster Whisper STT plugin.
+
+- `ovos-stt-plugin-fasterwhisper` image using only the CPU to transcribe *(default)*
+- `ovos-stt-plugin-fasterwhisper-cuda` image using only the GPU to transcribe
+
+**Only one implementation can be selected at a time.**
 
 ## Requirements
 
