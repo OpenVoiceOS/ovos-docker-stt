@@ -1,12 +1,12 @@
 # Open Voice OS Speech-to-Text (STT) on Docker or Podman
 
-## What is a Speech-to-Text (STT)?
+## What's a Speech-to-Text (STT)?
 
 *According to https://aws.amazon.com/what-is/speech-to-text:*
 
 > Speech to text is a speech recognition software that enables the recognition and translation of spoken language into text through computational linguistics. It is also known as speech recognition or computer speech recognition. Specific applications, tools, and devices can transcribe audio streams in real-time to display text and act on it.
 
-Open Voice OS provides support to different STT engines via a plugin mechanism exposing HTTP endpoints to be consumed by the voice assistant.
+Open Voice OS provides support for different STT engines via a plugin mechanism exposing HTTP endpoints to be consumed by the voice assistant.
 
 ## Containerized STT plugins
 
@@ -21,12 +21,16 @@ To facilitate the installation and the adoption of local Speech-to-Text engine, 
 | `ovos-stt-plugin-nemo`               | 8084 | Conversational AI toolkit built for researchers working on automatic speech recognition (ASR), natural language processing (NLP), and text-to-speech synthesis (TTS) |
 | `ovos-stt-plugin-vosk`               | 8081 | Vosk is a speech recognition toolkit supporting more than 20 languages and dialects, works offline and able to run on lightweight devices                            |
 
+Using this approach allows you as well to decentralize the STT server which means that it doesn't have to run locally on the voice assistant but on a remote server with more compute power using CPU and/or GPU.
+
 ### Image alternatives
 
-There are two *(2)* different implementations for Faster Whisper STT plugin.
+There are two *(2)* different implementations for the Faster Whisper STT plugin.
 
 - `ovos-stt-plugin-fasterwhisper` image using only the CPU to transcribe *(default)*
 - `ovos-stt-plugin-fasterwhisper-cuda` image using only the GPU to transcribe
+
+To use `ovos-stt-plugin-fasterwhisper-cuda`, please review the `docker-compose.yml` file.
 
 **Only one implementation can be selected at a time.**
 
