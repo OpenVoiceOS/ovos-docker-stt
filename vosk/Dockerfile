@@ -30,3 +30,5 @@ ENV PATH /home/${USER}/.venv/bin:$PATH
 ENV VIRTUAL_ENV /home/${USER}/.venv
 
 ENTRYPOINT ovos-stt-server --engine ovos-stt-plugin-vosk
+
+EXPOSE 8080
