@@ -1,0 +1,49 @@
+---
+version: "3.9"
+
+x-podman: &podman
+  userns_mode: keep-id
+  security_opt:
+    - "label=disable"
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    mode: non-blocking
+    max-buffer-size: 4m
+
+volumes:
+  ovos_stt_fasterwhisper_cache:
+    name: ovos_stt_fasterwhisper_cache
+    driver: local
+  ovos_stt_fasterwshiper_gradio_cache:
+    name: ovos_stt_fasterwshiper_gradio_cache
+    driver: local
+
+services:
+  ovos_stt_fasterwhisper:
+    <<: *podman
+    container_name: ovos_stt_fasterwhisper
+    hostname: ovos_stt_fasterwhisper
+    restart: unless-stopped
+    image: docker.io/smartgic/ovos-stt-server-fasterwhisper-cuda:${VERSION}
+    logging: *default-logging
+    pull_policy: always
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
+    environment:
+      TZ: $TZ
+      CT2_CUDA_ALLOW_FP16: 1
+    ports:
+      - "8080:8080"
+    volumes:
+      - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro,z
+      - ovos_stt_fasterwhisper_cache:/home/${OVOS_USER}/.cache
+      - ovos_stt_fasterwshiper_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples

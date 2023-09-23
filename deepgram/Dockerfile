@@ -28,3 +28,5 @@ RUN pip3 install aiohttp \
 USER $USER
 
 ENTRYPOINT ovos-stt-server --engine ovos-stt-plugin-deepgram
+
+EXPOSE 8080

@@ -2,7 +2,7 @@
 
 ## What's a Speech-to-Text (STT)?
 
-*According to https://aws.amazon.com/what-is/speech-to-text:*
+*According to <https://aws.amazon.com/what-is/speech-to-text>:*
 
 > Speech to text is a speech recognition software that enables the recognition and translation of spoken language into text through computational linguistics. It is also known as speech recognition or computer speech recognition. Specific applications, tools, and devices can transcribe audio streams in real-time to display text and act on it.
 
@@ -73,8 +73,8 @@ Pre-build images are already available [here](https://hub.docker.com/u/smartgic)
 
 ```bash
 git clone https://github.com/OpenVoiceOS/ovos-docker-stt.git
-mkdir -p ~/ovos/config
-chown ${USER}:${USER} -R ~/ovos
+mkdir -p ~/ovos-tts-stt/config
+chown ${USER}:${USER} -R ~/ovos-tts-stt
 cd ovos-docker-stt
 docker compose up -d
   # Or:
@@ -222,7 +222,6 @@ docker logs -f --tail 200 ovos_stt_fasterwhisper
   # Or:
 podman logs -f --tail 200 ovos_stt_fasterwhisper
 ```
-
 
 To go inside a container and run multiple commands, run the following command *(where `bash` is the available shell in there)*:
 
