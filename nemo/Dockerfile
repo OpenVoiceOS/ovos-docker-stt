@@ -19,9 +19,9 @@ SHELL ["/bin/bash", "-c"]
 
 RUN pip3 install aiohttp \
   && if [ "${ALPHA}" == "true" ]; then \
-  pip3 install ovos-stt-http-server SpeechRecognition ovos-stt-plugin-fasterwhisper streaming-stt-nemo neon-stt-plugin-nemo --pre; \
+  pip3 install ovos-stt-http-server SpeechRecognition streaming-stt-nemo neon-stt-plugin-nemo --pre; \
   else \
-  pip3 install ovos-stt-http-server SpeechRecognition ovos-stt-plugin-fasterwhisper streaming-stt-nemo neon-stt-plugin-nemo; \
+  pip3 install ovos-stt-http-server SpeechRecognition streaming-stt-nemo neon-stt-plugin-nemo; \
   fi \
   && mkdir -p ${HOME}/flagged \
   && rm -rf ${HOME}/.cache/*
