@@ -37,6 +37,12 @@ volumes:
   ovos_stt_nemo_gradio_cache:
     name: ovos_stt_nemo_gradio_cache
     driver: local
+  ovos_stt_citrinet_cache:
+    name: ovos_stt_citrinet_cache
+    driver: local
+  ovos_stt_citrinet_gradio_cache:
+    name: ovos_stt_citrinet_gradio_cache
+    driver: local
 
 services:
   ovos_stt_fasterwhisper:
@@ -126,3 +132,21 @@ services:
       - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro,z
       - ovos_stt_nemo_cache:/home/${OVOS_USER}/.local/share/vosk
       - ovos_stt_nemo_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
+
+  ovos_stt_citrinet:
+    <<: *podman
+    container_name: ovos_stt_citrinet
+    hostname: ovos_stt_citrinet
+    restart: unless-stopped
+    image: docker.io/smartgic/ovos-stt-server-citrinet:${VERSION}
+    logging: *default-logging
+    pull_policy: always
+    tty: true
+    environment:
+      TZ: $TZ
+    ports:
+      - "8084:8080"
+    volumes:
+      - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro,z
+      - ovos_stt_citrinet_cache:/home/${OVOS_USER}/.cache
+      - ovos_stt_citrinet_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
