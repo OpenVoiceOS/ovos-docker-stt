@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 ARG BUILD_DATE=unknown
 ARG VERSION=unknown
