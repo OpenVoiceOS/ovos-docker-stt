@@ -127,7 +127,7 @@ If you want to change the tag to deploy, update the `.env` file with the new val
   "stt": {
     "module": "ovos-stt-plugin-fasterwhisper",
     "ovos-stt-plugin-fasterwhisper": {
-        "model": "large-v2",
+        "model": "whisper-large-v3-turbo",
         "compute_type": "float16",
         "use_cuda": true,
         "cpu_thread": 8
@@ -164,7 +164,7 @@ Once the STT servers are up and running, the voice assistant must be configured 
       "module": "ovos-stt-plugin-server",
       "fallback_module": "ovos-stt-plugin-vosk",
       "ovos-stt-plugin-server": {
-        "url": [
+        "urls": [
           "http://192.168.1.227:8080/stt",
           "http://192.168.1.227:8081/stt",
           "http://192.168.1.227:8082/stt",
