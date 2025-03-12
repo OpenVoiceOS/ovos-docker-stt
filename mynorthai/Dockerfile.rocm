@@ -1,10 +1,10 @@
 ARG TAG=alpha
-FROM smartgic/ovos-stt-server-base:${TAG}
+FROM smartgic/ovos-stt-server-base-rocm:${TAG}
 
 ARG BUILD_DATE=unknown
 ARG VERSION=unknown
 
-LABEL org.opencontainers.image.title="Open Voice OS OCI STT MyNorthAI image"
+LABEL org.opencontainers.image.title="Open Voice OS OCI STT MyNorthAI image with AMD ROCm support"
 LABEL org.opencontainers.image.description="MyNorthAI is a STT specialized with Portuguese language."
 LABEL org.opencontainers.image.version=${VERSION}
 LABEL org.opencontainers.image.created=${BUILD_DATE}

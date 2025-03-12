@@ -38,7 +38,7 @@ services:
     container_name: ovos_stt_mynorthai
     hostname: ovos_stt_mynorthai
     restart: unless-stopped
-    image: docker.io/smartgic/ovos-stt-server-mynorthai-cuda:${VERSION}
+    image: docker.io/smartgic/ovos-stt-server-mynorthai-rocm:${VERSION}
     logging: *default-logging
     pull_policy: always
     tty: true
@@ -64,7 +64,7 @@ services:
     container_name: ovos_stt_nemo
     hostname: ovos_stt_nemo
     restart: unless-stopped
-    image: docker.io/smartgic/ovos-stt-server-nemo-cuda:${VERSION}
+    image: docker.io/smartgic/ovos-stt-server-nemo-rocm:${VERSION}
     logging: *default-logging
     pull_policy: always
     tty: true
@@ -90,7 +90,7 @@ services:
     container_name: ovos_stt_fasterwhisper
     hostname: ovos_stt_fasterwhisper
     restart: unless-stopped
-    image: docker.io/smartgic/ovos-stt-server-fasterwhisper-cuda:${VERSION}
+    image: docker.io/smartgic/ovos-stt-server-fasterwhisper-rocm:${VERSION}
     logging: *default-logging
     pull_policy: always
     tty: true

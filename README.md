@@ -59,9 +59,9 @@ podman buildx build fasterwhisper/ -t smartgic/ovos-stt-server-fasterwhisper:alp
 There are a list of available arguments that could be used during the image build process.
 
 | Name         | Value                              | Default   | Description                                                           |
-| ---          | ---                                | ---       | ---                                                                   |
+| ---          | ---                                |-----------| ---                                                                   |
 | `ALPHA`      | `true`                             | `false`   | Using the alpha releases from PyPi built from the `dev` branches      |
-| `BUILD_DATE` | `$(date -u +'%Y-%m-%dT%H:%M:%SZ')` | `unkown`  | Used as `LABEL` within the Dockerfile to determine the build date     |
+| `BUILD_DATE` | `$(date -u +'%Y-%m-%dT%H:%M:%SZ')` | `unknown` | Used as `LABEL` within the Dockerfile to determine the build date     |
 | `TAG`        | `dev`                              | `dev`     | OCI image tag, (e.g. `docker pull smartgic/ovos-stt-server-base:dev`) |
 | `VERSION`    | `0.0.8a`                           | `unknown` | Used as `LABEL` within the Dockerfile to determine the version        |
 
