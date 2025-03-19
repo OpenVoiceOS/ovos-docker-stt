@@ -5,7 +5,7 @@ ARG BUILD_DATE=unknown
 ARG VERSION=unknown
 
 LABEL org.opencontainers.image.title="Open Voice OS OCI STT Nemo image with AMD ROCm support"
-LABEL org.opencontainers.image.description="NVIDIA NeMo is a conversational AI toolkit built for researchers working on automatic speech recognition (ASR), natural language processing (NLP), and text-to-speech synthesis (TTS)."
+LABEL org.opencontainers.image.description=""
 LABEL org.opencontainers.image.version=${VERSION}
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 LABEL org.opencontainers.image.documentation="https://openvoiceos.github.io/community-docs"
@@ -19,16 +19,18 @@ SHELL ["/bin/bash", "-c"]
 
 RUN pip3 install aiohttp \
   && if [ "${ALPHA}" == "true" ]; then \
-  pip3 install ovos-stt-http-server SpeechRecognition setuptools ovos-stt-plugin-nemo --pre; \
+  pip3 install ovos-stt-http-server SpeechRecognition git+https://github.com/OpenVoiceOS/ovos-stt-plugin-nemo combo-lock==0.2.6 --pre; \
   else \
-  pip3 install ovos-stt-http-server SpeechRecognition setuptools ovos-stt-plugin-nemo; \
+  pip3 install ovos-stt-http-server SpeechRecognition git+https://github.com/OpenVoiceOS/ovos-stt-plugin-nemo; \
   fi \
   && mkdir -p ${HOME}/flagged \
   && rm -rf ${HOME}/.cache/*
 
-ENV PATH /home/${USER}/.venv/bin:$PATH
-ENV VIRTUAL_ENV /home/${USER}/.venv
+ENV PATH=/home/${USER}/.venv/bin:$PATH
+ENV VIRTUAL_ENV=/home/${USER}/.venv
 
-ENTRYPOINT ovos-stt-server --engine neon-stt-plugin-nemo
+COPY gpu.conf /etc/mycroft/mycroft.conf
+
+ENTRYPOINT ovos-stt-server --engine ovos-stt-plugin-nemo
 
 EXPOSE 8080

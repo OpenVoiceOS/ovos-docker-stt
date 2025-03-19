@@ -19,16 +19,18 @@ SHELL ["/bin/bash", "-c"]
 
 RUN pip3 install aiohttp \
   && if [ "${ALPHA}" == "true" ]; then \
-  pip3 install ovos-stt-http-server SpeechRecognition git+https://github.com/TigreGotico/ovos-stt-plugin-whisper.git git+https://github.com/TigreGotico/ovos-stt-plugin-MyNorthAI.git torch --pre; \
+  pip3 install ovos-stt-http-server SpeechRecognition git+https://github.com/TigreGotico/ovos-stt-plugin-whisper.git combo-lock==0.2.6 --pre; \
   else \
-  pip3 install ovos-stt-http-server SpeechRecognition ovos-stt-plugin-MyNorthAI; \
+  pip3 install ovos-stt-http-server SpeechRecognition git+https://github.com/TigreGotico/ovos-stt-plugin-whisper.git combo-lock==0.2.6; \
   fi \
   && mkdir -p ${HOME}/flagged \
   && rm -rf ${HOME}/.cache/*
 
+COPY gpu.conf /etc/mycroft/mycroft.conf
+
 ENV PATH=/home/${USER}/.venv/bin:$PATH
 ENV VIRTUAL_ENV=/home/${USER}/.venv
 
-ENTRYPOINT ovos-stt-server --engine ovos-stt-plugin-MyNorthAI
+ENTRYPOINT ovos-stt-server --engine ovos-stt-plugin-whisper
 
 EXPOSE 8080

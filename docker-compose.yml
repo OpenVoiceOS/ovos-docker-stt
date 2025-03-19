@@ -31,12 +31,6 @@ volumes:
   ovos_stt_deepgram_gradio_cache:
     name: ovos_stt_deepgram_gradio_cache
     driver: local
-  ovos_stt_nemo_cache:
-    name: ovos_stt_nemo_cache
-    driver: local
-  ovos_stt_nemo_gradio_cache:
-    name: ovos_stt_nemo_gradio_cache
-    driver: local
   ovos_stt_citrinet_cache:
     name: ovos_stt_citrinet_cache
     driver: local
@@ -47,6 +41,7 @@ volumes:
 services:
   ovos_stt_fasterwhisper:
     <<: *podman
+    build: ./fasterwhisper
     container_name: ovos_stt_fasterwhisper
     hostname: ovos_stt_fasterwhisper
     restart: unless-stopped
@@ -65,6 +60,7 @@ services:
 
   ovos_stt_vosk:
     <<: *podman
+    build: ./vosk
     container_name: ovos_stt_vosk
     hostname: ovos_stt_vosk
     restart: unless-stopped
@@ -83,6 +79,7 @@ services:
 
   ovos_stt_chromium:
     <<: *podman
+    build: ./chromium
     container_name: ovos_stt_chromium
     hostname: ovos_stt_chromium
     restart: unless-stopped
@@ -115,26 +112,9 @@ services:
       - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro,z
       - ovos_stt_deepgram_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
 
-  ovos_stt_nemo:
-    <<: *podman
-    container_name: ovos_stt_nemo
-    hostname: ovos_stt_nemo
-    restart: unless-stopped
-    image: docker.io/smartgic/ovos-stt-server-nemo:${VERSION}
-    logging: *default-logging
-    pull_policy: always
-    tty: true
-    environment:
-      TZ: $TZ
-    ports:
-      - "8084:8080"
-    volumes:
-      - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro,z
-      - ovos_stt_nemo_cache:/home/${OVOS_USER}/.local/share/vosk
-      - ovos_stt_nemo_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
-
   ovos_stt_citrinet:
     <<: *podman
+    build: ./citrinet
     container_name: ovos_stt_citrinet
     hostname: ovos_stt_citrinet
     restart: unless-stopped

@@ -1,27 +1,25 @@
 ARG TAG=alpha
-FROM smartgic/ovos-stt-server-base-cuda:${TAG}
+FROM smartgic/ovos-stt-server-base-rocm:${TAG}
 
 ARG BUILD_DATE=unknown
 ARG VERSION=unknown
 
-LABEL org.opencontainers.image.title="Open Voice OS OCI STT MyNorthAI image with Nvidia CUDA support"
-LABEL org.opencontainers.image.description="MyNorthAI is a STT specialized with Portuguese language."
+LABEL org.opencontainers.image.title="Open Voice OS OCI STT project AINA Whisper image with AMD ROCm support"
+LABEL org.opencontainers.image.description="project AINA Whisper is a STT specialized with Catalan language."
 LABEL org.opencontainers.image.version=${VERSION}
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 LABEL org.opencontainers.image.documentation="https://openvoiceos.github.io/community-docs"
 LABEL org.opencontainers.image.source="https://github.com/OpenVoiceOS/ovos-docker-stt"
 LABEL org.opencontainers.image.vendor="Open Voice OS"
 
-ARG ALPHA=false
+ARG ALPHA=true
 ARG USER=ovos
 
 SHELL ["/bin/bash", "-c"]
 
-COPY gpu.conf /etc/mycroft/mycroft.conf
-
 RUN pip3 install aiohttp \
   && if [ "${ALPHA}" == "true" ]; then \
-  pip3 install ovos-stt-http-server SpeechRecognition git+https://github.com/TigreGotico/ovos-stt-plugin-whisper.git --pre; \
+  pip3 install ovos-stt-http-server SpeechRecognition git+https://github.com/TigreGotico/ovos-stt-plugin-whisper.git combo-lock==0.2.6 --pre; \
   else \
   pip3 install ovos-stt-http-server SpeechRecognition git+https://github.com/TigreGotico/ovos-stt-plugin-whisper.git combo-lock==0.2.6; \
   fi \
@@ -30,6 +28,8 @@ RUN pip3 install aiohttp \
 
 ENV PATH=/home/${USER}/.venv/bin:$PATH
 ENV VIRTUAL_ENV=/home/${USER}/.venv
+
+COPY gpu.conf /etc/mycroft/mycroft.conf
 
 ENTRYPOINT ovos-stt-server --engine ovos-stt-plugin-whisper
 
