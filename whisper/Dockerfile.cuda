@@ -1,11 +1,11 @@
 ARG TAG=alpha
-FROM smartgic/ovos-stt-server-base:${TAG}
+FROM smartgic/ovos-stt-server-base-cuda:${TAG}
 
 ARG BUILD_DATE=unknown
 ARG VERSION=unknown
 
-LABEL org.opencontainers.image.title="Open Voice OS OCI STT MyNorthAI image"
-LABEL org.opencontainers.image.description="MyNorthAI is a STT specialized with Portuguese language."
+LABEL org.opencontainers.image.title="Open Voice OS OCI STT Whisper image with Nvidia CUDA support"
+LABEL org.opencontainers.image.description="OpenAI's Whisper automatic speech recognition (ASR) model"
 LABEL org.opencontainers.image.version=${VERSION}
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 LABEL org.opencontainers.image.documentation="https://openvoiceos.github.io/community-docs"
@@ -17,7 +17,7 @@ ARG USER=ovos
 
 SHELL ["/bin/bash", "-c"]
 
-COPY cpu.conf /etc/mycroft/mycroft.conf
+COPY gpu.conf /etc/mycroft/mycroft.conf
 
 RUN pip3 install aiohttp \
   && if [ "${ALPHA}" == "true" ]; then \

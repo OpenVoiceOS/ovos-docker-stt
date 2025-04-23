@@ -1,0 +1,173 @@
+---
+version: "3.9"
+
+x-podman: &podman
+  userns_mode: keep-id
+  security_opt:
+    - "label=disable"
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    mode: non-blocking
+    max-buffer-size: 4m
+
+volumes:
+  ovos_stt_whisper_cache:
+    name: ovos_stt_whisper_cache
+    driver: local
+  ovos_stt_whisper_gradio_cache:
+    name: ovos_stt_whisper_gradio_cache
+    driver: local
+  ovos_stt_hitz_cache:
+    name: ovos_stt_hitz_cache
+    driver: local
+  ovos_stt_hitz_gradio_cache:
+    name: ovos_stt_hitz_gradio_cache
+    driver: local
+  ovos_stt_mynorthai_cache:
+    name: ovos_stt_mynorthai_cache
+    driver: local
+  ovos_stt_mynorthai_gradio_cache:
+    name: ovos_stt_mynorthai_gradio_cache
+    driver: local
+  ovos_stt_aina_whisper_cache:
+    name: ovos_stt_aina_whisper_cache
+    driver: local
+  ovos_stt_aina_whisper_gradio_cache:
+    name: ovos_stt_aina_whisper_gradio_cache
+    driver: local
+
+services:
+
+  ovos_stt_mynorthai_rocm:
+    <<: *podman
+    build:
+      context: ./mynorthai
+      dockerfile: Dockerfile.rocm
+    container_name: ovos_stt_mynorthai_rocm
+    hostname: ovos_stt_mynorthai
+    restart: unless-stopped
+    image: smartgic/ovos-stt-server-mynorthai-rocm:${VERSION}
+    logging: *default-logging
+    #pull_policy: always
+    stdin_open: true
+    tty: true
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp=unconfined
+    group_add:
+      - video
+    ipc: host
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    environment:
+      TZ: $TZ
+      HSA_OVERRIDE_GFX_VERSION: 11.0.0  # YMMV - I needed this for AMD Radeon RX 7600 XT
+    ports:
+      - "9081:8080"
+    volumes:
+      - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro,z
+      - ovos_stt_aina_whisper_cache:/home/${OVOS_USER}/.cache
+      - ovos_stt_aina_whisper_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
+
+  ovos_stt_aina_whisper_rocm:
+    <<: *podman
+    build:
+      context: ./project-aina-whisper
+      dockerfile: Dockerfile.rocm
+    container_name: ovos_stt_aina_whisper_rocm
+    hostname: ovos_stt_aina_whisper
+    restart: unless-stopped
+    image: smartgic/ovos-stt-server-aina-whisper-rocm:${VERSION}
+    logging: *default-logging
+    #pull_policy: always
+    stdin_open: true
+    tty: true
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp=unconfined
+    group_add:
+      - video
+    ipc: host
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    environment:
+      TZ: $TZ
+      HSA_OVERRIDE_GFX_VERSION: 11.0.0  # YMMV - I needed this for AMD Radeon RX 7600 XT
+    ports:
+      - "9082:8080"
+    volumes:
+      - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro,z
+      - ovos_stt_aina_whisper_cache:/home/${OVOS_USER}/.cache
+      - ovos_stt_aina_whisper_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
+
+  ovos_stt_hitz_rocm:
+    <<: *podman
+    build:
+      context: ./hitz
+      dockerfile: Dockerfile.rocm
+    container_name: ovos_stt_hitz_rocm
+    hostname: ovos_stt_hitz
+    restart: unless-stopped
+    image: smartgic/ovos-stt-server-hitz-rocm:${VERSION}
+    logging: *default-logging
+    #pull_policy: always
+    stdin_open: true
+    tty: true
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp=unconfined
+    group_add:
+      - video
+    ipc: host
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    environment:
+      TZ: $TZ
+      HSA_OVERRIDE_GFX_VERSION: 11.0.0  # YMMV - I needed this for AMD Radeon RX 7600 XT
+    ports:
+      - "9083:8080"
+    volumes:
+      - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro,z
+      - ovos_stt_hitz_cache:/home/${OVOS_USER}/.cache
+      - ovos_stt_hitz_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
+
+  ovos_stt_whisper_rocm:
+    <<: *podman
+    build:
+      context: ./whisper
+      dockerfile: Dockerfile.rocm
+    container_name: ovos_stt_whisper_rocm
+    hostname: ovos_stt_whisper
+    restart: unless-stopped
+    image: smartgic/ovos-stt-server-whisper-rocm:${VERSION}
+    logging: *default-logging
+    #pull_policy: always
+    stdin_open: true
+    tty: true
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp=unconfined
+    group_add:
+      - video
+    ipc: host
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    environment:
+      TZ: $TZ
+      HSA_OVERRIDE_GFX_VERSION: 11.0.0  # YMMV - I needed this for AMD Radeon RX 7600 XT
+    ports:
+      - "9080:8080"
+    volumes:
+      - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro,z
+      - ovos_stt_whisper_cache:/home/${OVOS_USER}/.cache
+      - ovos_stt_whisper_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples

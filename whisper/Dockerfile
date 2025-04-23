@@ -4,15 +4,15 @@ FROM smartgic/ovos-stt-server-base:${TAG}
 ARG BUILD_DATE=unknown
 ARG VERSION=unknown
 
-LABEL org.opencontainers.image.title="Open Voice OS OCI STT MyNorthAI image"
-LABEL org.opencontainers.image.description="MyNorthAI is a STT specialized with Portuguese language."
+LABEL org.opencontainers.image.title="Open Voice OS OCI STT Whisper image"
+LABEL org.opencontainers.image.description="OpenAI's Whisper automatic speech recognition (ASR) model"
 LABEL org.opencontainers.image.version=${VERSION}
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 LABEL org.opencontainers.image.documentation="https://openvoiceos.github.io/community-docs"
 LABEL org.opencontainers.image.source="https://github.com/OpenVoiceOS/ovos-docker-stt"
 LABEL org.opencontainers.image.vendor="Open Voice OS"
 
-ARG ALPHA=false
+ARG ALPHA=true
 ARG USER=ovos
 
 SHELL ["/bin/bash", "-c"]

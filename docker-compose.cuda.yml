@@ -19,10 +19,48 @@ volumes:
   ovos_stt_fasterwshiper_gradio_cache:
     name: ovos_stt_fasterwshiper_gradio_cache
     driver: local
+  ovos_stt_mynorthai_cache:
+    name: ovos_stt_mynorthai_cache
+    driver: local
+  ovos_stt_mynorthai_gradio_cache:
+    name: ovos_stt_mynorthai_gradio_cache
+    driver: local
 
 services:
+  ovos_stt_mynorthai:
+    <<: *podman
+    build:
+      context: ./mynorthai
+      dockerfile: Dockerfile.cuda
+    container_name: ovos_stt_mynorthai
+    hostname: ovos_stt_mynorthai
+    restart: unless-stopped
+    image: docker.io/smartgic/ovos-stt-server-mynorthai-cuda:${VERSION}
+    logging: *default-logging
+    pull_policy: always
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
+    environment:
+      TZ: $TZ
+    ports:
+      - "8084:8080"
+    volumes:
+      - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro,z
+      - ovos_stt_mynorthai_cache:/home/${OVOS_USER}/.local/share
+      - ovos_stt_mynorthai_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
+
   ovos_stt_fasterwhisper:
     <<: *podman
+    build:
+      context: ./fasterwhisper
+      dockerfile: Dockerfile.cuda
     container_name: ovos_stt_fasterwhisper
     hostname: ovos_stt_fasterwhisper
     restart: unless-stopped

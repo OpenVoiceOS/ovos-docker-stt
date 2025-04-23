@@ -13,12 +13,12 @@ Open Voice OS provides support for different STT engines via a plugin mechanism 
 To facilitate the installation and the adoption of local Speech-to-Text engine, we build a set of OCI images compatible with Docker, Podman and Kubernetes as well.
 
 | Image                                | Port | Description                                                                                                                                                          |
-| ---                                  | ---  | ---                                                                                                                                                                  |
+|--------------------------------------| ---  | ---                                                                                                                                                                  |
 | `ovos-stt-plugin-chromium`           | 8082 | A STT plugin for OVOS using the Google Chrome browser API                                                                                                            |
 | `ovos-stt-plugin-deepgram`           | 8083 | Unmatched accuracy. Blazing fast. Enterprise scale. Hands-down the best price. Everything developers need to build with confidence and ship faster                   |
 | `ovos-stt-plugin-fasterwhisper`      | 8080 | High-performance inference of OpenAI's Whisper automatic speech recognition (ASR) model                                                                              |
 | `ovos-stt-plugin-fasterwhisper-cuda` | 8080 | High-performance inference of OpenAI's Whisper automatic speech recognition (ASR) model supporting Nvidia CUDA                                                       |
-| `ovos-stt-plugin-nemo`               | 8084 | Conversational AI toolkit built for researchers working on automatic speech recognition (ASR), natural language processing (NLP), and text-to-speech synthesis (TTS) |
+| `ovos-stt-plugin-citrinet`           | 8084 | Conversational AI toolkit built for researchers working on automatic speech recognition (ASR), natural language processing (NLP), and text-to-speech synthesis (TTS) |
 | `ovos-stt-plugin-vosk`               | 8081 | Vosk is a speech recognition toolkit supporting more than 20 languages and dialects, works offline and able to run on lightweight devices                            |
 
 Using this approach allows you as well to decentralize the STT server which means that it doesn't have to run locally on the voice assistant but on a remote server with more compute power using CPU and/or GPU.
@@ -59,9 +59,9 @@ podman buildx build fasterwhisper/ -t smartgic/ovos-stt-server-fasterwhisper:alp
 There are a list of available arguments that could be used during the image build process.
 
 | Name         | Value                              | Default   | Description                                                           |
-| ---          | ---                                | ---       | ---                                                                   |
+| ---          | ---                                |-----------| ---                                                                   |
 | `ALPHA`      | `true`                             | `false`   | Using the alpha releases from PyPi built from the `dev` branches      |
-| `BUILD_DATE` | `$(date -u +'%Y-%m-%dT%H:%M:%SZ')` | `unkown`  | Used as `LABEL` within the Dockerfile to determine the build date     |
+| `BUILD_DATE` | `$(date -u +'%Y-%m-%dT%H:%M:%SZ')` | `unknown` | Used as `LABEL` within the Dockerfile to determine the build date     |
 | `TAG`        | `dev`                              | `dev`     | OCI image tag, (e.g. `docker pull smartgic/ovos-stt-server-base:dev`) |
 | `VERSION`    | `0.0.8a`                           | `unknown` | Used as `LABEL` within the Dockerfile to determine the version        |
 

@@ -17,6 +17,8 @@ ARG USER=ovos
 
 SHELL ["/bin/bash", "-c"]
 
+COPY cpu.conf /etc/mycroft/mycroft.conf
+
 RUN pip3 install aiohttp \
   && if [ "${ALPHA}" == "true" ]; then \
   pip3 install ovos-stt-http-server SpeechRecognition ovos-stt-plugin-fasterwhisper --pre; \

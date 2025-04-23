@@ -1,10 +1,10 @@
 ARG TAG=alpha
-FROM smartgic/ovos-stt-server-base:${TAG}
+FROM smartgic/ovos-stt-server-base-rocm:${TAG}
 
 ARG BUILD_DATE=unknown
 ARG VERSION=unknown
 
-LABEL org.opencontainers.image.title="Open Voice OS OCI STT MyNorthAI image"
+LABEL org.opencontainers.image.title="Open Voice OS OCI STT MyNorthAI image with AMD ROCm support"
 LABEL org.opencontainers.image.description="MyNorthAI is a STT specialized with Portuguese language."
 LABEL org.opencontainers.image.version=${VERSION}
 LABEL org.opencontainers.image.created=${BUILD_DATE}
@@ -17,16 +17,16 @@ ARG USER=ovos
 
 SHELL ["/bin/bash", "-c"]
 
-COPY cpu.conf /etc/mycroft/mycroft.conf
-
 RUN pip3 install aiohttp \
   && if [ "${ALPHA}" == "true" ]; then \
-  pip3 install ovos-stt-http-server SpeechRecognition git+https://github.com/TigreGotico/ovos-stt-plugin-whisper.git torch --pre; \
+  pip3 install ovos-stt-http-server SpeechRecognition git+https://github.com/TigreGotico/ovos-stt-plugin-whisper.git combo-lock==0.2.6 --pre; \
   else \
-  pip3 install ovos-stt-http-server SpeechRecognition git+https://github.com/TigreGotico/ovos-stt-plugin-whisper.git torch; \
+  pip3 install ovos-stt-http-server SpeechRecognition git+https://github.com/TigreGotico/ovos-stt-plugin-whisper.git combo-lock==0.2.6; \
   fi \
   && mkdir -p ${HOME}/flagged \
   && rm -rf ${HOME}/.cache/*
+
+COPY gpu.conf /etc/mycroft/mycroft.conf
 
 ENV PATH=/home/${USER}/.venv/bin:$PATH
 ENV VIRTUAL_ENV=/home/${USER}/.venv

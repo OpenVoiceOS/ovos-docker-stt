@@ -1,11 +1,11 @@
 ARG TAG=alpha
-FROM smartgic/ovos-stt-server-base:${TAG}
+FROM smartgic/ovos-stt-server-base-rocm:${TAG}
 
 ARG BUILD_DATE=unknown
 ARG VERSION=unknown
 
-LABEL org.opencontainers.image.title="Open Voice OS OCI STT Nemo image"
-LABEL org.opencontainers.image.description="NVIDIA NeMo is a conversational AI toolkit built for researchers working on automatic speech recognition (ASR), natural language processing (NLP), and text-to-speech synthesis (TTS)."
+LABEL org.opencontainers.image.title="Open Voice OS OCI STT FastWhisper image with AMD ROCm support"
+LABEL org.opencontainers.image.description="High-performance inference of OpenAI's Whisper automatic speech recognition (ASR) model"
 LABEL org.opencontainers.image.version=${VERSION}
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 LABEL org.opencontainers.image.documentation="https://openvoiceos.github.io/community-docs"
@@ -17,11 +17,13 @@ ARG USER=ovos
 
 SHELL ["/bin/bash", "-c"]
 
+COPY gpu.conf /etc/mycroft/mycroft.conf
+
 RUN pip3 install aiohttp \
   && if [ "${ALPHA}" == "true" ]; then \
-  pip3 install ovos-stt-http-server SpeechRecognition setuptools ovos-stt-plugin-nemo --pre; \
+  pip3 install ovos-stt-http-server SpeechRecognition ovos-stt-plugin-fasterwhisper --pre; \
   else \
-  pip3 install ovos-stt-http-server SpeechRecognition setuptools ovos-stt-plugin-nemo; \
+  pip3 install ovos-stt-http-server SpeechRecognition ovos-stt-plugin-fasterwhisper; \
   fi \
   && mkdir -p ${HOME}/flagged \
   && rm -rf ${HOME}/.cache/*
@@ -29,6 +31,6 @@ RUN pip3 install aiohttp \
 ENV PATH /home/${USER}/.venv/bin:$PATH
 ENV VIRTUAL_ENV /home/${USER}/.venv
 
-ENTRYPOINT ovos-stt-server --engine neon-stt-plugin-nemo
+ENTRYPOINT ovos-stt-server --engine ovos-stt-plugin-fasterwhisper
 
 EXPOSE 8080
