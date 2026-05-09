@@ -20,6 +20,7 @@ To facilitate the installation and the adoption of local Speech-to-Text engine, 
 | `ovos-stt-plugin-fasterwhisper-cuda` | 8080 | High-performance inference of OpenAI's Whisper automatic speech recognition (ASR) model supporting Nvidia CUDA                                                       |
 | `ovos-stt-plugin-citrinet`           | 8084 | Conversational AI toolkit built for researchers working on automatic speech recognition (ASR), natural language processing (NLP), and text-to-speech synthesis (TTS) |
 | `ovos-stt-plugin-onnx-asr`           | 8085 | Offline ONNX Runtime ASR supporting models such as Nvidia Canary, Parakeet, and OpenAI Whisper                                                                      |
+| `ovos-stt-plugin-onnx-asr-cuda`      | 8085 | Offline ONNX Runtime ASR supporting Nvidia CUDA                                                                                                                     |
 | `ovos-stt-plugin-vosk`               | 8081 | Vosk is a speech recognition toolkit supporting more than 20 languages and dialects, works offline and able to run on lightweight devices                            |
 
 Using this approach allows you as well to decentralize the STT server which means that it doesn't have to run locally on the voice assistant but on a remote server with more compute power using CPU and/or GPU.
@@ -34,6 +35,13 @@ There are two *(2)* different implementations for the Faster Whisper STT plugin.
 To use `ovos-stt-plugin-fasterwhisper-cuda`, please review the `docker-compose.yml` file.
 
 **Only one implementation can be selected at a time.**
+
+There are also two *(2)* implementations for the ONNX ASR STT plugin.
+
+- `ovos-stt-plugin-onnx-asr` image using ONNX Runtime CPU execution
+- `ovos-stt-plugin-onnx-asr-cuda` image using ONNX Runtime GPU execution
+
+To use `ovos-stt-plugin-onnx-asr-cuda`, please review the `docker-compose.cuda.yml` file.
 
 ## Requirements
 
@@ -63,6 +71,16 @@ docker buildx build --platform linux/amd64 onnx-asr/ -t smartgic/ovos-stt-server
   # Or:
 podman buildx build --platform linux/amd64 base/ -t smartgic/ovos-stt-server-base:alpha --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') --no-cache
 podman buildx build --platform linux/amd64 onnx-asr/ -t smartgic/ovos-stt-server-onnx-asr:alpha --build-arg TAG=alpha --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') --no-cache
+```
+
+The `onnx-asr` CUDA image is available for `linux/amd64` only. Rebuild the CUDA base image first with the same tag, then build `onnx-asr` for `amd64`.
+
+```bash
+docker buildx build --platform linux/amd64 base/ -f base/Dockerfile.cuda -t smartgic/ovos-stt-server-base-cuda:alpha --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') --no-cache
+docker buildx build --platform linux/amd64 onnx-asr/ -f onnx-asr/Dockerfile.cuda -t smartgic/ovos-stt-server-onnx-asr-cuda:alpha --build-arg TAG=alpha --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') --no-cache
+  # Or:
+podman buildx build --platform linux/amd64 base/ -f base/Dockerfile.cuda -t smartgic/ovos-stt-server-base-cuda:alpha --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') --no-cache
+podman buildx build --platform linux/amd64 onnx-asr/ -f onnx-asr/Dockerfile.cuda -t smartgic/ovos-stt-server-onnx-asr-cuda:alpha --build-arg TAG=alpha --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') --no-cache
 ```
 
 ### Arguments
@@ -168,6 +186,23 @@ If you want to change the tag to deploy, update the `.env` file with the new val
 ```
 
 If you don't plan to use Nvidia CUDA with the STT Faster Whisper plugin, then `use_cuda` should be set to `false` and `compute_type` set to `int8`.
+
+If you plan to use Nvidia CUDA with the ONNX ASR plugin, omit `quantization` so the GPU image uses the non-quantized ONNX model files. The CUDA image also supports explicit ONNX Runtime providers.
+
+```json
+{
+  "stt": {
+    "module": "ovos-stt-plugin-onnx-asr",
+    "ovos-stt-plugin-onnx-asr": {
+        "model": "nemo-parakeet-tdt-0.6b-v3",
+        "providers": [
+            "CUDAExecutionProvider",
+            "CPUExecutionProvider"
+        ]
+    }
+  }
+}
+```
 
 ## Configure the voice assistant
 

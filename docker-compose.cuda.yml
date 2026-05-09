@@ -25,6 +25,12 @@ volumes:
   ovos_stt_mynorthai_gradio_cache:
     name: ovos_stt_mynorthai_gradio_cache
     driver: local
+  ovos_stt_onnx_asr_cache:
+    name: ovos_stt_onnx_asr_cache
+    driver: local
+  ovos_stt_onnx_asr_gradio_cache:
+    name: ovos_stt_onnx_asr_gradio_cache
+    driver: local
 
 services:
   ovos_stt_mynorthai:
@@ -85,3 +91,37 @@ services:
       - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro,z
       - ovos_stt_fasterwhisper_cache:/home/${OVOS_USER}/.cache
       - ovos_stt_fasterwshiper_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
+
+  ovos_stt_onnx_asr:
+    <<: *podman
+    platform: linux/amd64
+    build:
+      context: ./onnx-asr
+      dockerfile: Dockerfile.cuda
+      args:
+        TAG: ${VERSION}
+      platforms:
+        - linux/amd64
+    container_name: ovos_stt_onnx_asr
+    hostname: ovos_stt_onnx_asr
+    restart: unless-stopped
+    image: docker.io/smartgic/ovos-stt-server-onnx-asr-cuda:${VERSION}
+    logging: *default-logging
+    pull_policy: always
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
+    environment:
+      TZ: $TZ
+    ports:
+      - "8085:8080"
+    volumes:
+      - ${CONFIG_FOLDER}:/home/${OVOS_USER}/.config/mycroft:ro,z
+      - ovos_stt_onnx_asr_cache:/home/${OVOS_USER}/.cache
+      - ovos_stt_onnx_asr_gradio_cache:/home/${OVOS_USER}/gradio_cached_examples
