@@ -38,6 +38,6 @@ RUN if [ "$(uname -m)" != "x86_64" ]; then \
 ENV PATH /home/${USER}/.venv/bin:$PATH
 ENV VIRTUAL_ENV /home/${USER}/.venv
 
-ENTRYPOINT ovos-stt-server --engine ovos-stt-plugin-onnx-asr
+ENTRYPOINT ["/home/ovos/.venv/bin/ovos-stt-server", "--engine", "ovos-stt-plugin-onnx-asr"]
 
 EXPOSE 8080
