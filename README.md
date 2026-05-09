@@ -19,6 +19,7 @@ To facilitate the installation and the adoption of local Speech-to-Text engine, 
 | `ovos-stt-plugin-fasterwhisper`      | 8080 | High-performance inference of OpenAI's Whisper automatic speech recognition (ASR) model                                                                              |
 | `ovos-stt-plugin-fasterwhisper-cuda` | 8080 | High-performance inference of OpenAI's Whisper automatic speech recognition (ASR) model supporting Nvidia CUDA                                                       |
 | `ovos-stt-plugin-citrinet`           | 8084 | Conversational AI toolkit built for researchers working on automatic speech recognition (ASR), natural language processing (NLP), and text-to-speech synthesis (TTS) |
+| `ovos-stt-plugin-onnx-asr`           | 8085 | Offline ONNX Runtime ASR supporting models such as Nvidia Canary, Parakeet, and OpenAI Whisper                                                                      |
 | `ovos-stt-plugin-vosk`               | 8081 | Vosk is a speech recognition toolkit supporting more than 20 languages and dialects, works offline and able to run on lightweight devices                            |
 
 Using this approach allows you as well to decentralize the STT server which means that it doesn't have to run locally on the voice assistant but on a remote server with more compute power using CPU and/or GPU.
@@ -52,6 +53,16 @@ cd ovos-docker-stt
 docker buildx build fasterwhisper/ -t smartgic/ovos-stt-server-fasterwhisper:alpha --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') --no-cache
   # Or:
 podman buildx build fasterwhisper/ -t smartgic/ovos-stt-server-fasterwhisper:alpha --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') --no-cache
+```
+
+The `onnx-asr` image is available for `linux/amd64` only. Rebuild the base image first with the same tag, then build `onnx-asr` for `amd64`.
+
+```bash
+docker buildx build --platform linux/amd64 base/ -t smartgic/ovos-stt-server-base:alpha --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') --no-cache
+docker buildx build --platform linux/amd64 onnx-asr/ -t smartgic/ovos-stt-server-onnx-asr:alpha --build-arg TAG=alpha --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') --no-cache
+  # Or:
+podman buildx build --platform linux/amd64 base/ -t smartgic/ovos-stt-server-base:alpha --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') --no-cache
+podman buildx build --platform linux/amd64 onnx-asr/ -t smartgic/ovos-stt-server-onnx-asr:alpha --build-arg TAG=alpha --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') --no-cache
 ```
 
 ### Arguments
@@ -147,6 +158,10 @@ If you want to change the tag to deploy, update the `.env` file with the new val
         "lang": "en-US",
         "pfilter": false,
         "debug": false
+    },
+    "ovos-stt-plugin-onnx-asr": {
+        "model": "nemo-canary-1b-v2",
+        "quantization": "int8"
     }
   }
 }
@@ -170,6 +185,7 @@ Once the STT servers are up and running, the voice assistant must be configured 
           "http://192.168.1.227:8082/stt",
           "http://192.168.1.227:8083/stt",
           "http://192.168.1.227:8084/stt",
+          "http://192.168.1.227:8085/stt",
           "https://stt.openvoiceos.org/stt"
         ]
       }
@@ -177,7 +193,7 @@ Once the STT servers are up and running, the voice assistant must be configured 
 }
 ```
 
-The configuration means that `ovos-stt-plugin-server` will be used as default STT plugin. The plugin has a list of five *(5)* STT servers, if one is down then the plugin goes to the next one, etc...
+The configuration means that `ovos-stt-plugin-server` will be used as default STT plugin. The plugin has a list of six *(6)* STT servers, if one is down then the plugin goes to the next one, etc...
 
 If all the STT servers from `ovos-stt-plugin-server` are down then the voice assistant will fallback to the `ovos-stt-plugin-vosk` STT server running locally to the voice assistant.
 
