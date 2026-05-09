@@ -37,7 +37,8 @@ RUN if [ "$(uname -m)" != "x86_64" ]; then \
 
 ENV PATH /home/${USER}/.venv/bin:$PATH
 ENV VIRTUAL_ENV /home/${USER}/.venv
+ENV PYTHONPATH /home/${USER}/.venv/lib/python3.12/site-packages
 
-ENTRYPOINT ["/home/ovos/.venv/bin/ovos-stt-server", "--engine", "ovos-stt-plugin-onnx-asr"]
+ENTRYPOINT ["/usr/bin/python3", "-m", "ovos_stt_http_server", "--engine", "ovos-stt-plugin-onnx-asr"]
 
 EXPOSE 8080
