@@ -160,7 +160,7 @@ If you want to change the tag to deploy, update the `.env` file with the new val
         "debug": false
     },
     "ovos-stt-plugin-onnx-asr": {
-        "model": "nemo-canary-1b-v2",
+        "model": "nemo-parakeet-tdt-0.6b-v3",
         "quantization": "int8"
     }
   }
