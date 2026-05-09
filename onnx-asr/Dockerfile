@@ -18,6 +18,7 @@ ARG USER=ovos
 SHELL ["/bin/bash", "-c"]
 
 COPY cpu.conf /etc/mycroft/mycroft.conf
+COPY --chown=${USER}:${USER} patch-provider-config.py /tmp/patch-provider-config.py
 
 RUN if [ "$(uname -m)" != "x86_64" ]; then \
   echo "ovos-stt-plugin-onnx-asr image is supported only on linux/amd64" >&2; \
@@ -29,6 +30,8 @@ RUN if [ "$(uname -m)" != "x86_64" ]; then \
   else \
   MYCROFT_LOOSE_REQUIREMENTS=1 pip3 install git+https://github.com/OpenVoiceOS/ovos-stt-http-server.git@dev SpeechRecognition onnxruntime git+https://github.com/TigreGotico/ovos-stt-plugin-onnx-asr.git; \
   fi \
+  && python3 /tmp/patch-provider-config.py \
+  && rm /tmp/patch-provider-config.py \
   && mkdir -p ${HOME}/flagged \
   && rm -rf ${HOME}/.cache/*
 
