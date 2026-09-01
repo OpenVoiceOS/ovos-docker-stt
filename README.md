@@ -1,21 +1,21 @@
 # Open Voice OS Speech-to-Text (STT) on Docker or Podman
 
-## What's a Speech-to-Text (STT)?
+## What is Speech-to-Text (STT)?
 
 *According to <https://aws.amazon.com/what-is/speech-to-text>:*
 
 > Speech to text is a speech recognition software that enables the recognition and translation of spoken language into text through computational linguistics. It is also known as speech recognition or computer speech recognition. Specific applications, tools, and devices can transcribe audio streams in real-time to display text and act on it.
 
-Open Voice OS provides support for different STT engines via a plugin mechanism exposing HTTP endpoints to be consumed by the voice assistant.
+Open Voice OS supports different STT engines through a plugin mechanism. Each plugin exposes an HTTP endpoint that the voice assistant can use.
 
 ## Containerized STT plugins
 
-To facilitate the installation and the adoption of local Speech-to-Text engine, we build a set of OCI images compatible with Docker, Podman and Kubernetes as well.
+This repository builds a set of OCI images for local Speech-to-Text engines. The images work with Docker, Podman, and Kubernetes.
 
 | Image                                | Port | Description                                                                                                                                                          |
 |--------------------------------------| ---  | ---                                                                                                                                                                  |
 | `ovos-stt-plugin-chromium`           | 8082 | A STT plugin for OVOS using the Google Chrome browser API                                                                                                            |
-| `ovos-stt-plugin-deepgram`           | 8083 | Unmatched accuracy. Blazing fast. Enterprise scale. Hands-down the best price. Everything developers need to build with confidence and ship faster                   |
+| `ovos-stt-plugin-deepgram`           | 8083 | Cloud STT service from Deepgram, offered at enterprise scale                                                                                                         |
 | `ovos-stt-plugin-fasterwhisper`      | 8080 | High-performance inference of OpenAI's Whisper automatic speech recognition (ASR) model                                                                              |
 | `ovos-stt-plugin-fasterwhisper-cuda` | 8080 | High-performance inference of OpenAI's Whisper automatic speech recognition (ASR) model supporting Nvidia CUDA                                                       |
 | `ovos-stt-plugin-citrinet`           | 8084 | Conversational AI toolkit built for researchers working on automatic speech recognition (ASR), natural language processing (NLP), and text-to-speech synthesis (TTS) |
@@ -23,37 +23,37 @@ To facilitate the installation and the adoption of local Speech-to-Text engine, 
 | `ovos-stt-plugin-onnx-asr-cuda`      | 8085 | Offline ONNX Runtime ASR supporting Nvidia CUDA                                                                                                                     |
 | `ovos-stt-plugin-vosk`               | 8081 | Vosk is a speech recognition toolkit supporting more than 20 languages and dialects, works offline and able to run on lightweight devices                            |
 
-Using this approach allows you as well to decentralize the STT server which means that it doesn't have to run locally on the voice assistant but on a remote server with more compute power using CPU and/or GPU.
+This approach also lets you decentralize the STT server. The server does not have to run on the voice assistant. It can run on a remote server with more CPU and/or GPU power.
 
 ### Image alternatives
 
-There are two *(2)* different implementations for the Faster Whisper STT plugin.
+There are two implementations of the Faster Whisper STT plugin.
 
-- `ovos-stt-plugin-fasterwhisper` image using only the CPU to transcribe *(default)*
-- `ovos-stt-plugin-fasterwhisper-cuda` image using only the GPU to transcribe
+- `ovos-stt-plugin-fasterwhisper` uses only the CPU to transcribe (default).
+- `ovos-stt-plugin-fasterwhisper-cuda` uses only the GPU to transcribe.
 
-To use `ovos-stt-plugin-fasterwhisper-cuda`, please review the `docker-compose.yml` file.
+To use `ovos-stt-plugin-fasterwhisper-cuda`, review the `docker-compose.yml` file.
 
-**Only one implementation can be selected at a time.**
+**Only one implementation can run at a time.**
 
-There are also two *(2)* implementations for the ONNX ASR STT plugin.
+There are also two implementations of the ONNX ASR STT plugin.
 
-- `ovos-stt-plugin-onnx-asr` image using ONNX Runtime CPU execution
-- `ovos-stt-plugin-onnx-asr-cuda` image using ONNX Runtime GPU execution
+- `ovos-stt-plugin-onnx-asr` uses ONNX Runtime CPU execution.
+- `ovos-stt-plugin-onnx-asr-cuda` uses ONNX Runtime GPU execution.
 
-To use `ovos-stt-plugin-onnx-asr-cuda`, please review the `docker-compose.cuda.yml` file.
+To use `ovos-stt-plugin-onnx-asr-cuda`, review the `docker-compose.cuda.yml` file.
 
 ## Requirements
 
 ### Docker or Podman
 
-Docker or Podman *(rootless)* is of course required and `docker compose` *(not `docker-compose`!!)* or `podman-compose` is a nice to have to simplify the whole process of deploying the whole stack by using the `docker-compose.yml` files *(for Docker, this command will be embedded depending the version, for Podman, `podman-compose` command comes from a different package)*.
+Docker or Podman (rootless) is required. `docker compose` (not `docker-compose`) or `podman-compose` helps simplify deployment of the stack using the `docker-compose.yml` files. For Docker, this command is embedded depending on the version. For Podman, the `podman-compose` command comes from a separate package.
 
-**If you plan to passthrough GPUs in order to leverage Nvidia CUDA with Docker or Podman, please make you configured your container engine properly to support GPUs.**
+**If you plan to pass through GPUs to use Nvidia CUDA with Docker or Podman, configure your container engine to support GPUs first.**
 
 ## How to build these images
 
-The `base` image is the main layer for the other images, for example the `fasterwhisper` image requires the `base` image to be build.
+The `base` image is the main layer for the other images. For example, the `fasterwhisper` image needs the `base` image built first.
 
 ```bash
 git clone https://github.com/OpenVoiceOS/ovos-docker-stt.git
@@ -85,20 +85,20 @@ podman buildx build --platform linux/amd64 onnx-asr/ -f onnx-asr/Dockerfile.cuda
 
 ### Arguments
 
-There are a list of available arguments that could be used during the image build process.
+You can pass these arguments during the image build process.
 
 | Name         | Value                              | Default   | Description                                                           |
 | ---          | ---                                |-----------| ---                                                                   |
-| `ALPHA`      | `true`                             | `false`   | Using the alpha releases from PyPi built from the `dev` branches      |
-| `BUILD_DATE` | `$(date -u +'%Y-%m-%dT%H:%M:%SZ')` | `unknown` | Used as `LABEL` within the Dockerfile to determine the build date     |
+| `ALPHA`      | `true`                             | `false`   | Use the alpha releases from PyPI built from the `dev` branches        |
+| `BUILD_DATE` | `$(date -u +'%Y-%m-%dT%H:%M:%SZ')` | `unknown` | Used as a `LABEL` in the Dockerfile to record the build date          |
 | `TAG`        | `dev`                              | `dev`     | OCI image tag, (e.g. `docker pull smartgic/ovos-stt-server-base:dev`) |
-| `VERSION`    | `0.0.8a`                           | `unknown` | Used as `LABEL` within the Dockerfile to determine the version        |
+| `VERSION`    | `0.0.8a`                           | `unknown` | Used as a `LABEL` in the Dockerfile to record the version             |
 
-Pre-build images are already available [here](https://hub.docker.com/u/smartgic) and are the default referenced within the `docker-compose.yml` file.
+Pre-built images are available [here](https://hub.docker.com/u/smartgic). The `docker-compose.yml` file references them by default.
 
 ## How to use these images
 
-`docker-compose.yml` file provides an easy way to provision the container stack *(volumes and services)* with the required configuration for each of them. `docker compose` or `podman-compose` both support environment files, check the `.env` file.
+The `docker-compose.yml` file provisions the container stack (volumes and services) with the required configuration for each service. `docker compose` and `podman-compose` both support environment files. Check the `.env` file.
 
 ```bash
 git clone https://github.com/OpenVoiceOS/ovos-docker-stt.git
@@ -110,7 +110,7 @@ docker compose up -d
 podman-compose up -d
 ```
 
-To reduce the potential overhead due to the image downloads and extracts, the `--parallel` option could be user in order to process the images by batch of `x` *(where `x` is an integer)*.
+To reduce overhead from image downloads and extraction, use the `--parallel` option to process images in batches of `x` (an integer).
 
 ```bash
 docker compose --parallel 3 up -d
@@ -118,7 +118,7 @@ docker compose --parallel 3 up -d
 podman-compose --parallel 3 up -d
 ```
 
-If you only plan to use the Faster Whisper STT server then you could reference it to the command line.
+If you only plan to use the Faster Whisper STT server, reference it on the command line.
 
 ```bash
 docker compose up -d ovos_stt_fasterwhisper
@@ -126,15 +126,15 @@ docker compose up -d ovos_stt_fasterwhisper
 podman-compose up -d ovos_stt_fasterwhisper
 ```
 
-Some variables might need to be tuned to match your setup such as the timezone, the directories, *etc...*, have a look into the `.env` files befor running `docker compose` or `podman-compose`.
+Some variables might need tuning to match your setup, such as the timezone and directories. Check the `.env` file before running `docker compose` or `podman-compose`.
 
-The `OVOS_USER` variable should be changed **only** if you build the Docker images with a different user than `ovos`.
+Change the `OVOS_USER` variable only if you build the Docker images with a different user than `ovos`.
 
 ## How to update the current stack
 
-The easiest way to update a stack already deployed by `docker compose` or `podman-compose` is to use `docker compose` or `podman-compose`. :relaxed:
+The easiest way to update a stack already deployed by `docker compose` or `podman-compose` is to use `docker compose` or `podman-compose` again.
 
-Because the `pull_policy` option of each service is set to `always`, everytime that a new image is uploaded with the same tag then `docker compose` or `podman-compose` will pull-it and re-create the container based on this new image.
+Each service sets `pull_policy` to `always`. Every time a new image is uploaded with the same tag, `docker compose` or `podman-compose` pulls it and re-creates the container from the new image.
 
 ```bash
 docker compose up -d
@@ -142,11 +142,11 @@ docker compose up -d
 podman-compose up -d
 ```
 
-If you want to change the tag to deploy, update the `.env` file with the new value.
+To change the tag to deploy, update the `.env` file with the new value.
 
-## Configuration the STT plugins
+## Configure the STT plugins
 
-`~/ovos/config/mycroft.conf` configuration file is used to configura the STT plugin. Make sure to adapt the sample below to fit your requirements.
+The `~/ovos/config/mycroft.conf` configuration file configures the STT plugin. Adapt the sample below to fit your setup.
 
 ```json
 {
@@ -185,7 +185,7 @@ If you want to change the tag to deploy, update the `.env` file with the new val
 }
 ```
 
-If you don't plan to use Nvidia CUDA with the STT Faster Whisper plugin, then `use_cuda` should be set to `false` and `compute_type` set to `int8`.
+If you do not plan to use Nvidia CUDA with the STT Faster Whisper plugin, set `use_cuda` to `false` and `compute_type` to `int8`.
 
 If you plan to use Nvidia CUDA with the ONNX ASR plugin, omit `quantization` so the GPU image uses the non-quantized ONNX model files. The CUDA image also supports explicit ONNX Runtime providers.
 
@@ -206,7 +206,7 @@ If you plan to use Nvidia CUDA with the ONNX ASR plugin, omit `quantization` so 
 
 ## Configure the voice assistant
 
-Once the STT servers are up and running, the voice assistant must be configured to reference them. Please make sure to add the section below to your `~/ovos/config/mycroft.conf` configuration file.
+Once the STT servers are running, configure the voice assistant to reference them. Add the section below to your `~/ovos/config/mycroft.conf` configuration file.
 
 ```json
 {
@@ -228,15 +228,15 @@ Once the STT servers are up and running, the voice assistant must be configured 
 }
 ```
 
-The configuration means that `ovos-stt-plugin-server` will be used as default STT plugin. The plugin has a list of six *(6)* STT servers, if one is down then the plugin goes to the next one, etc...
+This configuration sets `ovos-stt-plugin-server` as the default STT plugin. The plugin holds a list of six STT servers. If one is down, the plugin tries the next one, and so on.
 
-If all the STT servers from `ovos-stt-plugin-server` are down then the voice assistant will fallback to the `ovos-stt-plugin-vosk` STT server running locally to the voice assistant.
+If all the STT servers from `ovos-stt-plugin-server` are down, the voice assistant falls back to the `ovos-stt-plugin-vosk` STT server running locally.
 
 ## Debug
 
 ### Is the STT alive?
 
-In order to check if a STT server is up and running, the `/status` endpoint should be called *(`jq` command is not mandatory just nice to have)*.
+To check if a STT server is up and running, call the `/status` endpoint (`jq` is not required, but it helps).
 
 ```bash
 curl -v http://192.168.1.227:8080/status | jq
@@ -244,7 +244,7 @@ curl -v http://192.168.1.227:8080/status | jq
 
 ### Logging
 
-Enable debug mode in `~/ovos/config/mycroft.conf` to get more verbosity from the logs. All containers will have to be restarted to receive the configuration change.
+Enable debug mode in `~/ovos/config/mycroft.conf` to get more detail from the logs. Restart all containers to apply the configuration change.
 
 ```json
 {
@@ -258,7 +258,7 @@ Enable debug mode in `~/ovos/config/mycroft.conf` to get more verbosity from the
 
 ### Container debugging
 
-To access all the container logs at the same time, run the following command *(make sure it matches the `docker compose` or `podman-compose` command you run to deploy the stack)*:
+To see all container logs at the same time, run the command that matches how you deployed the stack:
 
 ```bash
 docker compose logs -f --tail 200
@@ -266,7 +266,7 @@ docker compose logs -f --tail 200
 podman-compose logs -n -f --tail 200
 ```
 
-To access the logs of a specific container, run the following command:
+To see the logs of a specific container, run:
 
 ```bash
 docker logs -f --tail 200 ovos_stt_fasterwhisper
@@ -274,7 +274,7 @@ docker logs -f --tail 200 ovos_stt_fasterwhisper
 podman logs -f --tail 200 ovos_stt_fasterwhisper
 ```
 
-To go inside a container and run multiple commands, run the following command *(where `bash` is the available shell in there)*:
+To go inside a container and run multiple commands, run this (`bash` is the shell available in the container):
 
 ```bash
 docker exec -ti ovos_stt_fasterwhisper bash
@@ -282,13 +282,13 @@ docker exec -ti ovos_stt_fasterwhisper bash
 podman exec -ti ovos_stt_fasterwhisper bash
 ```
 
-If the configuration file is not valid JSON, `jq` will return something like this:
+If the configuration file is not valid JSON, `jq` returns an error like this:
 
 ```text
 parse error: Expected another key-value pair at line 81, column 3
 ```
 
-To get the CPU, memory and I/O consumption per container, run the following command:
+To get the CPU, memory, and I/O use per container, run:
 
 ```bash
 docker stats -a --no-trunc
@@ -298,11 +298,15 @@ podman stats -a --no-trunc
 
 ### Validate configuration
 
-Make sure `mycroft.conf` configuration file is JSON valid by using the `jq` command.
+Use the `jq` command to check that the `mycroft.conf` configuration file is valid JSON.
 
 ```bash
 cat ~/ovos/config/mycroft.conf | jq
 ```
+
+## Related projects
+
+- [OpenVoiceOS/ovos-docker-tts](https://github.com/OpenVoiceOS/ovos-docker-tts) — Docker images for Open Voice OS Text-to-Speech (TTS) engines
 
 ## Support
 
