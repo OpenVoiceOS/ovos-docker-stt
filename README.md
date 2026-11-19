@@ -94,6 +94,19 @@ You can pass these arguments during the image build process.
 | `TAG`        | `dev`                              | `dev`     | OCI image tag, (e.g. `docker pull smartgic/ovos-stt-server-base:dev`) |
 | `VERSION`    | `0.0.8a`                           | `unknown` | Used as a `LABEL` in the Dockerfile to record the version             |
 
+The `onnx-asr` CUDA image has two more arguments.
+
+| Name                    | Default                                      | Description                                                          |
+| ---                     | ---                                          | ---                                                                  |
+| `ONNXRUNTIME_GPU_REF`   | `1.29.0`                                     | Version of `onnxruntime-gpu`. It must fit the CUDA of the base image |
+| `ONNXRUNTIME_GPU_INDEX` | The CUDA 12 feed of the ONNX Runtime project | Package index that has this version                                  |
+
+ONNX Runtime 1.27 and later on PyPI are built for CUDA 13. The CUDA base image has CUDA 12, and the CUDA 12 builds are only in the package feed of the ONNX Runtime project. This feed has no version later than 1.29.0.
+
+Version 1.29.0 loads with the CUDA 12.9.2 of `base/Dockerfile.cuda`. It does not load with CUDA 12.6.3. Thus, rebuild the CUDA base image before you build the `onnx-asr` CUDA image. The build stops if the CUDA provider of ONNX Runtime does not fit the CUDA libraries of the base image. Without this check, ONNX Runtime uses the CPU and only writes a warning.
+
+If the base image changes to CUDA 13, set `ONNXRUNTIME_GPU_INDEX` to `https://pypi.org/simple/` and `ONNXRUNTIME_GPU_REF` to a release from PyPI.
+
 Pre-built images are available [here](https://hub.docker.com/u/smartgic). The `docker-compose.yml` file references them by default.
 
 ## How to use these images
@@ -188,6 +201,8 @@ The `~/ovos/config/mycroft.conf` configuration file configures the STT plugin. A
 If you do not plan to use Nvidia CUDA with the STT Faster Whisper plugin, set `use_cuda` to `false` and `compute_type` to `int8`.
 
 If you plan to use Nvidia CUDA with the ONNX ASR plugin, omit `quantization` so the GPU image uses the non-quantized ONNX model files. The CUDA image also supports explicit ONNX Runtime providers.
+
+The ONNX ASR plugin keeps each model in the directory that `model_dir` gives. The two `onnx-asr` images set `model_dir` to `/home/ovos/.cache/ovos_stt_plugin_onnxasr`. This directory is in the cache volume of the `docker-compose` files, thus the models stay there when the container is made again. If you build the images with a different user than `ovos`, change `model_dir` in `onnx-asr/cpu.conf` and `onnx-asr/gpu.conf`.
 
 ```json
 {

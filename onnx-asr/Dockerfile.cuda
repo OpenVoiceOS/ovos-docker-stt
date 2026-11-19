@@ -14,12 +14,23 @@ LABEL org.opencontainers.image.vendor="Open Voice OS"
 
 ARG ALPHA=false
 ARG USER=ovos
+# ONNX Runtime 1.27 and later on PyPI are built for CUDA 13. The base image carries CUDA 12, so the
+# CUDA 12 build is taken from the package feed of the ONNX Runtime project, which has them up to
+# 1.29.0. A build that does not fit the CUDA of the image cannot load its CUDA provider: ONNX Runtime
+# then uses the CPU and only logs a warning. 1.29.0 loads with the CUDA 12.9.2 of base/Dockerfile.cuda
+# and not with CUDA 12.6.3. For a CUDA 13 base image, set ONNXRUNTIME_GPU_INDEX to
+# https://pypi.org/simple/ and ONNXRUNTIME_GPU_REF to a release from PyPI.
+ARG ONNXRUNTIME_GPU_REF=1.29.0
+ARG ONNXRUNTIME_GPU_INDEX=https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/onnxruntime-cuda-12/pypi/simple/
 
 SHELL ["/bin/bash", "-c"]
 
 COPY gpu.conf /etc/mycroft/mycroft.conf
-COPY --chown=${USER}:${USER} patch-provider-config.py /tmp/patch-provider-config.py
 
+# "onnx_asr[gpu,hub]" installs the newest onnxruntime-gpu with its dependencies. The step after it
+# replaces that package with the build named by ONNXRUNTIME_GPU_REF, and the build stops if the CUDA
+# provider of that build does not find a library or a symbol in the CUDA libraries of this image.
+# libcuda.so is not looked for: it is the driver library, which the host adds when the container runs.
 RUN if [ "$(uname -m)" != "x86_64" ]; then \
   echo "ovos-stt-plugin-onnx-asr CUDA image is supported only on linux/amd64" >&2; \
   exit 1; \
@@ -30,8 +41,13 @@ RUN if [ "$(uname -m)" != "x86_64" ]; then \
   else \
   MYCROFT_LOOSE_REQUIREMENTS=1 pip3 install git+https://github.com/OpenVoiceOS/ovos-stt-http-server.git@dev SpeechRecognition "onnx_asr[gpu,hub]" git+https://github.com/TigreGotico/ovos-stt-plugin-onnx-asr.git; \
   fi \
-  && python3 /tmp/patch-provider-config.py \
-  && rm /tmp/patch-provider-config.py \
+  && pip3 uninstall -y onnxruntime onnxruntime-gpu \
+  && pip3 install --no-deps --index-url "${ONNXRUNTIME_GPU_INDEX}" "onnxruntime-gpu==${ONNXRUNTIME_GPU_REF}" \
+  && cuda_provider="$(python3 -c 'import os, onnxruntime; print(os.path.join(os.path.dirname(onnxruntime.__file__), "capi", "libonnxruntime_providers_cuda.so"))')" \
+  && if ldd -r "${cuda_provider}" 2>&1 | grep -E "=> not found|undefined symbol: .*, version " | grep -v "libcuda.so"; then \
+  echo "onnxruntime-gpu ${ONNXRUNTIME_GPU_REF} does not fit the CUDA libraries of this image" >&2; \
+  exit 1; \
+  fi \
   && mkdir -p ${HOME}/flagged \
   && rm -rf ${HOME}/.cache/*
 
