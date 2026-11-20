@@ -202,7 +202,11 @@ If you do not plan to use Nvidia CUDA with the STT Faster Whisper plugin, set `u
 
 If you plan to use Nvidia CUDA with the ONNX ASR plugin, omit `quantization` so the GPU image uses the non-quantized ONNX model files. The CUDA image also supports explicit ONNX Runtime providers.
 
-The ONNX ASR plugin keeps each model in the directory that `model_dir` gives. The two `onnx-asr` images set `model_dir` to `/home/ovos/.cache/ovos_stt_plugin_onnxasr`. This directory is in the cache volume of the `docker-compose` files, thus the models stay there when the container is made again. If you build the images with a different user than `ovos`, change `model_dir` in `onnx-asr/cpu.conf` and `onnx-asr/gpu.conf`.
+The ONNX ASR plugin keeps each model in the directory that `model_dir` gives. The CPU image sets `model_dir` to `/home/ovos/.cache/ovos_stt_plugin_onnxasr` and the CUDA image to `/home/ovos/.cache/ovos_stt_plugin_onnxasr_gpu`. Both directories are in the cache volume of the `docker-compose` files, thus the models stay there when the container is made again. If you build the images with a different user than `ovos`, change `model_dir` in `onnx-asr/cpu.conf` and `onnx-asr/gpu.conf`.
+
+The two images have a directory each because they do not load the same files: the CPU image loads the `int8` files and the CUDA image the full-precision ones. The plugin does not download into a model directory that already exists, so the image that came second would find the other one's files and fail with `ModelFileNotFoundError`. Keep it that way if you change `quantization` in a configuration of your own: give that configuration its own `model_dir`.
+
+For the same reason, a model download that was interrupted leaves a directory that fails with `ModelFileNotFoundError` on every start. Remove the model's directory from the cache volume and start the container again, for example `rm -rf /home/ovos/.cache/ovos_stt_plugin_onnxasr_gpu/nemo-parakeet-tdt-0.6b-v3`. The plugin will do this by itself once it has the change proposed in OpenVoiceOS/ovos-stt-plugin-onnx-asr#46.
 
 ```json
 {
