@@ -206,7 +206,19 @@ The ONNX ASR plugin keeps each model in the directory that `model_dir` gives. Th
 
 The two images have a directory each because they do not load the same files: the CPU image loads the `int8` files and the CUDA image the full-precision ones. The plugin does not download into a model directory that already exists, so the image that came second would find the other one's files and fail with `ModelFileNotFoundError`. Keep it that way if you change `quantization` in a configuration of your own: give that configuration its own `model_dir`.
 
-For the same reason, a model download that was interrupted leaves a directory that fails with `ModelFileNotFoundError` on every start. Remove the model's directory from the cache volume and start the container again, for example `rm -rf /home/ovos/.cache/ovos_stt_plugin_onnxasr_gpu/nemo-parakeet-tdt-0.6b-v3`. The plugin will do this by itself once it has the change proposed in OpenVoiceOS/ovos-stt-plugin-onnx-asr#46.
+For the same reason, a model download that was interrupted leaves a directory that fails with `ModelFileNotFoundError` on every start. The directory is in the `ovos_stt_onnx_asr_cache` volume, not on the host, and the container starts again after each failure. Thus stop the service, remove the model's directory with a temporary container, then start the service again. In the volume, the CUDA image's models are in `ovos_stt_plugin_onnxasr_gpu` and the CPU image's models are in `ovos_stt_plugin_onnxasr`. If you use `docker-compose.cuda.yml`, add `-f docker-compose.cuda.yml` to the two compose commands.
+
+```bash
+docker compose stop ovos_stt_onnx_asr
+docker run --rm -v ovos_stt_onnx_asr_cache:/cache docker.io/library/alpine rm -rf /cache/ovos_stt_plugin_onnxasr_gpu/nemo-parakeet-tdt-0.6b-v3
+docker compose up -d ovos_stt_onnx_asr
+  # Or:
+podman-compose stop ovos_stt_onnx_asr
+podman run --rm -v ovos_stt_onnx_asr_cache:/cache docker.io/library/alpine rm -rf /cache/ovos_stt_plugin_onnxasr_gpu/nemo-parakeet-tdt-0.6b-v3
+podman-compose up -d ovos_stt_onnx_asr
+```
+
+The plugin will do this by itself once it has the change proposed in OpenVoiceOS/ovos-stt-plugin-onnx-asr#46.
 
 ```json
 {
